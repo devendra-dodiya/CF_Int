@@ -1,0 +1,39 @@
+{
+	"AWSTemplateFormatVersion" : "2010-09-09",
+	
+	"Description" : "S3 static website through CF",
+	
+	"Parameters" : {
+		"BucketName" : {
+			"Type" : "String",
+			"Description" : "S3 bucket for static website",
+			"MinLength" : "5",
+			"MaxLength" : "20"
+		}
+	},
+	
+	"Resources" : {
+		"vzws3bucket" : {
+			"Type" : "AWS::S3::Bucket",
+				"Properties" : {
+					"AccessControl" : "PublicRead",
+					"BucketName" : { "Ref" : "BucketName" },
+					"WebsiteConfiguration" : {
+						"IndexDocument" : "index.html",
+						"ErrorDocument" : "error.html"
+					}
+				}
+		}
+	},
+	
+	"Outputs" : {
+		"WebSiteURL" : {
+			"Value" : { "Fn::GetAtt" : [ "vzws3bucket","WebsiteURL" ]},
+			"Description" : "This is s3 website url"
+		},
+		"SecureURL" : {
+			"Value" : { "Fn::Join" : [ "", [ "https://", { "Fn::GetAtt" : [ "vzws3bucket", "DomainName" ] } ] ] },
+			"Description" : "Secure URL for S3 website"
+		}
+	}
+}
